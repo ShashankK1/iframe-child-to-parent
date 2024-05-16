@@ -1,23 +1,29 @@
 import logo from './logo.svg';
 import './App.css';
+import { useEffect, useRef, useState } from 'react';
 
 function App() {
+  const [showOverlay, setShowOverlay] = useState(false);
+  const receiveMessage = (e) => {
+    if (e.data === 'iframe-btn-clicked') {
+      setShowOverlay(true);
+    }
+  }
+  useEffect(() => {
+    window.addEventListener('message', receiveMessage);
+    return () => {
+      window.removeEventListener('message', receiveMessage);
+    }
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {
+        showOverlay &&
+        <div className='overlay'>
+          <div style={{ position: 'absolute', height: '200px', width: '200px', backgroundColor: 'white', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', color: 'red' }}>{"message received from overlay"}</div>
+        </div>
+      }
+      <iframe height={'100%'} src="Iframe.html" />
     </div>
   );
 }
